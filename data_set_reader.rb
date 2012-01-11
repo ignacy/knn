@@ -17,7 +17,7 @@ module Knn
       f = File.open(@file, "r") 
       f.each_line do |line|
         elements = line.split(/\s+/)
-        data << elements[0...-1].map(&:to_i)
+        data << elements[0...-1].map(&:to_f)
         labels << elements[-1]
       end
 
