@@ -1,5 +1,8 @@
+require 'linalg'
+
 module Knn
   class DataSetReader
+    include Linalg
     attr_accessor :file
     
     def initialize(f)
@@ -14,7 +17,7 @@ module Knn
       f = File.open(@file, "r") 
       f.each_line do |line|
         elements = line.split(/\s+/)
-        data << elements[0...-1]
+        data << elements[0...-1].map(&:to_i)
         labels << elements[-1]
       end
 

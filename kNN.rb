@@ -9,10 +9,10 @@ module Knn
     def initialize(d, l, k)
       @dataSet = DMatrix.rows(d)
       @labels, @k = l, k
+      @dataSet = normalize(@dataSet)
     end
 
     def classify(example)
-      @dataSet = normalize(@dataSet)
       distances = find_distances(example)
       pairs = pair_up(distances)
       votes = gather_votes(votes, pairs)
@@ -42,23 +42,22 @@ module Knn
       DMatrix.rows(new_set)
     end
 
-    def test_classifier_accuracy
+    def self.test_classifier_accuracy
       testingSetSize = 0.10
       datingDataMat, datingLabels = DataSetReader.new('datingTestSet.txt').read
-      normMat = normalize(datingDataMat)
-      m = normMat.size
+      m = datingDataMat.size
       numTestVecs = (m * testingSetSize).ceil
-      
+
       errorCount = 0.0
-      classIfer = Classifier.new(normMat[0...numTestVecs], datingLabels[0...numTestVecs], 3)
+      classIfer = Classifier.new(datingDataMat[0...numTestVecs], datingLabels[0...numTestVecs], 3)
       (0...numTestVecs).each do |i|
-        classifierResult = classIfer.classify(normMat[i])
+        classifierResult = classIfer.classify(classIfer.dataSet.row(i).to_a.flatten)
         puts "the classifier came back with: #{classifierResult} and should with #{datingLabels[i]} "
         if (classifierResult != datingLabels[i])
           errorCount += 1.0
         end
 
-        puts "the total error rate is: == #{errorCount/numTestVecs}"
+        puts "the total error rate is: == #{errorCount/numTestVecs.to_f}"
       end
     end
 
@@ -94,4 +93,8 @@ module Knn
       return votes
     end
   end
+end
+
+if __FILE__ == $0
+  Knn::Classifier.test_classifier_accuracy
 end
