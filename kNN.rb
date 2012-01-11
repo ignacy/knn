@@ -12,7 +12,7 @@ module Knn
     end
 
     def classify(example)
-      # @dataSet = normalize(@dataSet)
+      @dataSet = normalize(@dataSet)
       distances = find_distances(example)
       pairs = pair_up(distances)
       votes = gather_votes(votes, pairs)
@@ -20,27 +20,26 @@ module Knn
       votes.sort_by { |v| freq[v] }.last
     end
 
-    # Highli unefficient, but ruby's Matrix implementations
-    # suck greatly
     def normalize(set)
-      columns_count = set.first.size
-
-      columns = []
-      (0..columns_count).each { |col_index| columns[col_index] = [] }
-
-      set.each do |row|
-        row.each_with_index { |e, i| columns[i] << e.to_i }
+      mins, maxes = [], []
+      set.columns.each_with_index do |column, i|
+        maxes[i] = column.to_a.max
+        mins[i]  = column.to_a.min
       end
 
-      set.each_with_index do |row, i|
+      mins.flatten!
+      maxes.flatten!
+
+      new_set = []      
+      set.rows.each do |row|
         new_row = []
-        row.each_with_index do |cell, idx|
-          new_row[idx] = (cell.to_i - columns[idx].min) / (columns[idx].max - columns[idx].min)
+        row.elems.each_with_index do |cell, idx|
+          new_row[idx] = (cell.to_i - mins[idx]) / (maxes[idx] - mins[idx])
         end
-        set[i] = new_row
+        new_set << new_row
       end
-
-      return set
+      
+      DMatrix.rows(new_set)
     end
 
     def test_classifier_accuracy

@@ -23,10 +23,10 @@ class KnnTest < Test::Unit::TestCase
   end
 
   def test_classify_for_0_0_0
-    group = [[0,0,0], [1, 0, 0], [1, 1, 1], [2, 2, 2], [7, 5, 2]]
+    group = [[0, 0 ,0], [0.6, 0, 0], [1, 1, 1], [2, 3, 2], [7, 5, 2]]
     labels = ["A", "A", "B", "B", "C"]
     knn = Knn::Classifier.new(group, labels, 3)
-    assert_equal "A", knn.classify([0.5, 0.5])
+    assert_equal "A", knn.classify([0.1, 0.3, 0])
   end
     
 end
