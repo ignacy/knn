@@ -7,7 +7,8 @@ module Knn
     attr_accessor :dataSet, :labels, :k
 
     def initialize(d, l, k)
-      @dataSet, @labels, @k = d, l, k
+      @dataSet = DMatrix.rows(d)
+      @labels, @k = l, k
     end
 
     def classify(example)
