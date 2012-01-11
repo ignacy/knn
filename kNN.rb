@@ -67,13 +67,15 @@ module Knn
     private
 
     def find_distances(ex)
-      @dataSet.inject([]) do |distances, p|
+      distances = []
+      @dataSet.rows.each do |row|
         sum = 0
-        ex.each_with_index do |feature, i|
-          sum += ((p[i] - feature)**2)
+        row.each_with_index do |el, i|
+          sum += ((el - ex[i])**2)
         end
         distances << ::Math.sqrt(sum)
       end
+      distances
     end
 
     def pair_up(distances)
