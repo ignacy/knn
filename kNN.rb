@@ -42,27 +42,6 @@ module Knn
       DMatrix.rows(new_set)
     end
 
-    def self.test_classifier_accuracy
-      testingSetSize = 0.1
-      datingDataMat, datingLabels = DataSetReader.new('datingTestSet.txt').read
-      m = datingDataMat.size
-      numTestVecs = (m * testingSetSize).ceil
-
-      errorCount = 0.0
-      classIfer = Classifier.new(datingDataMat[0...numTestVecs], datingLabels[0...numTestVecs], 3)
-      (0...numTestVecs).each do |i|
-        row = classIfer.dataSet.row(i).to_a.flatten
-        classifierResult = classIfer.classify(row)
-        puts "the classifier came back with: #{classifierResult} and should with #{datingLabels[i]} "
-        if (classifierResult != datingLabels[i])
-          errorCount += 1.0
-        end
-
-        puts "the total error rate is: == #{errorCount/numTestVecs}"
-      end
-    end
-
-
     private
 
     def find_distances(ex)
