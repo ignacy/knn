@@ -8,8 +8,7 @@ class KnnTest < Test::Unit::TestCase
     labels = ['A', 'A', 'B', 'B']
     @knn = Knn::Classifier.new(group, labels, 3)
   end
-  
-  
+
   def test_classify_0_0
     assert_equal "B", @knn.classify([0,0])
   end

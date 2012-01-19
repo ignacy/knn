@@ -21,39 +21,38 @@ module Knn
     end
 
     def normalize(set)
-      mins, maxes = [], []
-      set.columns.each_with_index do |column, i|
-        maxes[i] = column.to_a.max
-        mins[i]  = column.to_a.min
-      end
-
-      mins.flatten!
-      maxes.flatten!
-
-      new_set = []      
-      set.rows.each do |row|
+      mins, maxes = find_mins_and_maxes(set)
+      new_set = set.rows.inject([]) do |new_set, row|
         new_row = []
         row.elems.each_with_index do |cell, idx|
           new_row[idx] = (cell.to_i - mins[idx]) / (maxes[idx] - mins[idx])
         end
         new_set << new_row
       end
-      
       DMatrix.rows(new_set)
     end
 
     private
 
     def find_distances(ex)
-      distances = []
-      @dataSet.rows.each do |row|
+      distances = @dataSet.rows.inject([]) do |distances, row|
         sum = 0
         row.each_with_index do |el, i|
           sum += ((el - ex[i])**2)
         end
         distances << ::Math.sqrt(sum)
       end
-      distances
+    end
+
+    def find_mins_and_maxes(set)
+      mins, maxes = [], []
+      set.columns.each_with_index do |column, i|
+        maxes[i] = column.to_a.max
+        mins[i]  = column.to_a.min
+      end
+      mins.flatten!
+      maxes.flatten!
+      [mins, maxes]
     end
 
     def pair_up(distances)
@@ -66,15 +65,9 @@ module Knn
     end
 
     def gather_votes(votes, pairs)
-      votes = []
-      (0...@k).each do |neighbour|
+      votes = (0...@k).each.inject([]) do |votes, neighbour|
         votes << pairs[0].last
       end
-      return votes
     end
   end
-end
-
-if __FILE__ == $0
-  Knn::Classifier.test_classifier_accuracy
 end
